@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/usr/local/bin/perl -w
 
 #imports
 use strict;
@@ -42,8 +42,18 @@ my $json = JSON->new;
 my $data = $json->decode($json_text);
 my @arr = @{$data->{arr}};
 
-print "<table>";
-for( $a = 0; $a < 15 && $#arr - $a >=0 ; $a = $a + 1 ) {
+my @query  = split(/&/,$ENV{'QUERY_STRING'});
+my $num = 10;
+foreach(@query){
+	#print "$_<br>\n";
+	my @parsed = split(/=/,$_);
+	if($parsed[0]=="num"){
+		$num = $parsed[1];
+	}
+}
+
+print "<table align=\"center\">";
+for( $a = 0; $a < $num && $#arr - $a >=0 ; $a = $a + 1 ) {
 	my $line = $arr[$#arr - $a];
 	my @dat = split(/:([^:]+)$/, $line);
 	print "<tr><td>$dat[0]</td><td>$dat[1]</td></tr>\n";
@@ -51,4 +61,4 @@ for( $a = 0; $a < 15 && $#arr - $a >=0 ; $a = $a + 1 ) {
 print "</table>";
 
 printfile('end.html');
-print "</body> </html>\n";
+

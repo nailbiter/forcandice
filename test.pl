@@ -18,47 +18,59 @@ sub printfile{
 	 
 	close(FH);
 }
+sub querytohash{
+	my %data = ();
+	my @query  = split(/&/,$ENV{'QUERY_STRING'});
+	my $num = 10;
+	foreach(@query){
+		#print "$_<br>\n";
+		my @parsed = split(/=/,$_);
+		#if($parsed[0]=="num"){
+		#	$num = $parsed[1];
+		#}
+		$data{$parsed[0]} = $parsed[1]
+	}
+	return %data
+}
+sub candicemain{
+	my (%data) = @_;
+	print "<html> <head>\n";
+	print "<meta charset=\"UTF-8\">\n";
+	print "<title>Hello, world!</title>";
+	print "<style>";
+	printfile('style.css');
+	print "</style>";
+	print "</head>\n";
+	print "<body>\n";
+	printfile('start.html');
+
+	my $filename = '/u/cs/98/9822058/assistantBotFiles/assistantBotFiles/time.json';
+	my $json_text = do {
+	   open(my $json_fh, "<:encoding(UTF-8)", $filename)
+	      or die("Can't open \$filename\": $!\n");
+	   local $/;
+	   <$json_fh>
+	};
+	my $json = JSON->new;
+	my $data = $json->decode($json_text);
+	my @arr = @{$data->{arr}};
+	my $num = 15;
+	if(exists $data{num}){
+		$num = $data{num}
+	}
+
+	print "<table align=\"center\">";
+	for( $a = 0; $a < $num && $#arr - $a >=0 ; $a = $a + 1 ) {
+		my $line = $arr[$#arr - $a];
+		my @dat = split(/:([^:]+)$/, $line);
+		print "<tr><td>$dat[0]</td><td>$dat[1]</td></tr>\n";
+	}
+	print "</table>";
+
+	printfile('end.html');
+}
 
 #main
+my %data = querytohash();
 print "Content-Type: text/html\n\n";
-print "<html> <head>\n";
-print "<meta charset=\"UTF-8\">\n";
-print "<title>Hello, world!</title>";
-print "<style>";
-printfile('style.css');
-print "</style>";
-print "</head>\n";
-print "<body>\n";
-printfile('start.html');
-
-my $filename = '/u/cs/98/9822058/assistantBotFiles/assistantBotFiles/time.json';
-my $json_text = do {
-   open(my $json_fh, "<:encoding(UTF-8)", $filename)
-      or die("Can't open \$filename\": $!\n");
-   local $/;
-   <$json_fh>
-};
-my $json = JSON->new;
-my $data = $json->decode($json_text);
-my @arr = @{$data->{arr}};
-
-my @query  = split(/&/,$ENV{'QUERY_STRING'});
-my $num = 10;
-foreach(@query){
-	#print "$_<br>\n";
-	my @parsed = split(/=/,$_);
-	if($parsed[0]=="num"){
-		$num = $parsed[1];
-	}
-}
-
-print "<table align=\"center\">";
-for( $a = 0; $a < $num && $#arr - $a >=0 ; $a = $a + 1 ) {
-	my $line = $arr[$#arr - $a];
-	my @dat = split(/:([^:]+)$/, $line);
-	print "<tr><td>$dat[0]</td><td>$dat[1]</td></tr>\n";
-}
-print "</table>";
-
-printfile('end.html');
-
+candicemain(%data);

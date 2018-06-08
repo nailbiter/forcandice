@@ -32,14 +32,27 @@ sub querytohash{
 	}
 	return %data
 }
+sub printtable{
+	print "<table align=\"center\">\n";
+	my @list = @_;
+	for my $var (@list) {
+		print "<tr>";
+		for my $item (@$var){
+			print "<td>$item</td>"
+		}
+		print "</tr>\n";
+	}
+	print "</table>\n";
+}
 sub candicemain{
 	my (%data) = @_;
+	print "Content-Type: text/html\n\n";
 	print "<html> <head>\n";
 	print "<meta charset=\"UTF-8\">\n";
 	print "<title>Hello, world!</title>";
-	print "<style>";
+	print "<style>\n";
 	printfile('style.css');
-	print "</style>";
+	print "</style>\n";
 	print "</head>\n";
 	print "<body>\n";
 	printfile('start.html');
@@ -59,18 +72,54 @@ sub candicemain{
 		$num = $data{num}
 	}
 
-	print "<table align=\"center\">";
-	for( $a = 0; $a < $num && $#arr - $a >=0 ; $a = $a + 1 ) {
-		my $line = $arr[$#arr - $a];
-		my @dat = split(/:([^:]+)$/, $line);
-		print "<tr><td>$dat[0]</td><td>$dat[1]</td></tr>\n";
+	my @splitted = ();
+	for( my $a = 0; $a < $num && $#arr - $a >=0 ; $a = $a + 1 ) {
+		$splitted[$a] = [split(/:([^:]+)$/, $arr[$#arr - $a])];
 	}
-	print "</table>";
+	printtable(@splitted);
 
 	printfile('end.html');
+}
+sub printsummary{
+	my (%data) = @_;
+	print "Content-Type: text/html\n\n";
+	print "<html> <head>\n";
+	print "<meta charset=\"UTF-8\">\n";
+	print "<title>Hello, world!</title>";
+	print "<style>\n";
+	printfile('style.css');
+	print "</style>\n";
+	print "</head>\n";
+	print "<body>\n";
+	#printfile('start.html');
+
+	my $filename = '/u/cs/98/9822058/assistantBotFiles/assistantBotFiles/time.json';
+	my $json_text = do {
+	   open(my $json_fh, "<:encoding(UTF-8)", $filename)
+	      or die("Can't open \$filename\": $!\n");
+	   local $/;
+	   <$json_fh>
+	};
+	my $json = JSON->new;
+	my $data = $json->decode($json_text);
+	my @arr = @{$data->{arr}};
+
+	my @splitted = ();
+	my $unit = $data{unit};
+	if($unit ne "day"){
+		return;
+	}
+	#print "$unit<br>\n";
+	for( my $a = 0; $a < 15 && $#arr - $a >=0 ; $a = $a + 1 ) {
+		$splitted[$a] = [split(/:([^:]+)$/, $arr[$#arr - $a])];
+	}
+	printtable(@splitted);
 }
 
 #main
 my %data = querytohash();
-print "Content-Type: text/html\n\n";
-candicemain(%data);
+if(exists $data{unit}){
+	printsummary(%data)
+}else{
+	candicemain(%data);
+}

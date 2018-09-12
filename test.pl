@@ -49,8 +49,8 @@ sub candicemain{
 		my $minutes = $5;
 		my $seconds = $6;
 
-		$hours = $hours % 24;
 		$day = $day + ($hours/24);
+		$hours = $hours % 24;
 
 		my $res = sprintf("<tr><td>%s</td><td>%s</td><td>%s</td></tr>",
 			sprintf("%04d-%02d-%02d",$year,$month,$day),
@@ -60,6 +60,7 @@ sub candicemain{
 	}
 	@list = sort(@list);
 	@list = @list[-15..-1];
+	@list = reverse(@list);
 
 	my $vars = {
 		CONTENT => join("\n",@list),

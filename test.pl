@@ -4,8 +4,6 @@
 use strict;
 use warnings;
 use lib qw(/u/cs/98/9822058/lib/perl5/site_perl/ /u/cs/98/9822058/perl5/lib/perl5/amd64-freebsd-thread-multi/ /u/cs/98/9822058/lib/perl5/ /u/cs/98/9822058/perl5/lib/perl5 /u/cs/98/9822058/lib/perl5/MongoDB/);
-#use JSON;
-#use File::Fetch;
 #use MongoDB;
 use Template;
 use POSIX qw( strftime );
@@ -14,7 +12,7 @@ use POSIX qw( strftime );
 my $tt = Template->new({
 	INCLUDE_PATH => 'templates',
 }) || die "$Template::ERROR\n";
-#my $client     = MongoDB->connect('mongodb://nailbiter:cryuaCSujCio42@ds149672.mlab.com:49672/logistics');
+my $client     = MongoDB->connect('mongodb://nailbiter:cryuaCSujCio42@ds149672.mlab.com:49672/logistics');
 
 #function declarations
 sub querytohash{
@@ -28,13 +26,11 @@ sub querytohash{
 	return %data
 }
 sub candicemain{
-	#my (%data) = @_;
+	my (%data) = @_;
 	#my $collection = $client->ns('logistics.time');
 	#my $query_result = $collection->find({},{limit=>15,sort=>{date=>-1}})->result;
 
 	print "Content-Type: text/html\n\n";
-	print "hi";
-	return;
 
 	my @list = ();
 	#while ( my $next = $query_result->next ) {
@@ -87,9 +83,6 @@ sub printsummary{
 }
 
 #main
-print "Content-Type: text/html\n\n";
-print "hi";
-exit();
 my %data = querytohash();
 if(exists $data{unit}){
 	printsummary(%data)

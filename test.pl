@@ -29,7 +29,9 @@ sub querytohash{
 sub candicemain{
 	my (%data) = @_;
 
-	my $json_text= `curl -L "https://api.mlab.com/api/1/databases/logistics/collections/time?apiKey=XuEWY1VwkY9YbKuVmmyueeIvX_HA_28y"`;
+	my $apikey = "XuEWY1VwkY9YbKuVmmyueeIvX_HA_28y";
+	my $uri = sprintf("https://api.mlab.com/api/1/databases/logistics/collections/time?apiKey=%s",$apikey);
+	my $json_text= `curl -L "$uri"`;
 	my $json = JSON->new;
 	my @data = @{$json->decode($json_text)};
 	my @list = ();

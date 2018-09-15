@@ -28,8 +28,11 @@ sub querytohash{
 }
 sub candicemain{
 	my (%data) = @_;
-
-	my $apikey = "XuEWY1VwkY9YbKuVmmyueeIvX_HA_28y";
+	open(FILE, 'apikey.txt') or die "Can't read file 'filename' [$!]\n";
+	my $apikey = <FILE>;
+	chomp($apikey);
+	#my $apikey = `cat apikey.txt`;
+	printf("key: %s",$apikey);
 	my $uri = sprintf("https://api.mlab.com/api/1/databases/logistics/collections/time?apiKey=%s",$apikey);
 	my $json_text= `curl -L "$uri"`;
 	my $json = JSON->new;
